@@ -30,6 +30,7 @@ public abstract class ObdCommand {
     protected ArrayList<Integer> buffer = null;
     protected String cmd = null;
     protected boolean useImperialUnits = false;
+    protected boolean convertRawData = true;
     protected String rawData = null;
     protected Long responseDelayInMs = null;
     private long start;
@@ -125,6 +126,23 @@ public abstract class ObdCommand {
      */
     protected void readResult(InputStream in) throws IOException {
         readRawData(in);
+        if (convertRawData) {
+            checkForErrors();
+            fillBuffer();
+            performCalculations();
+        }
+    }
+
+    /**
+     * This method runs the error handling and data conversion logic
+     * associated with the given ObdCommand, separate from the readResult
+     * method, allowing users to read raw data and process that data at
+     * some later point
+     *
+     * @param rawData
+     */
+    protected void convertRawData(String rawData) {
+        this.rawData = rawData;
         checkForErrors();
         fillBuffer();
         performCalculations();
@@ -278,6 +296,14 @@ public abstract class ObdCommand {
     public void useImperialUnits(boolean isImperial) {
         this.useImperialUnits = isImperial;
     }
+
+    /**
+     * Set to 'false' if you want the readResult method to bypass the error
+     * handling and data conversion logic
+     *
+     * @param convertRawData a boolean
+     */
+    public void setConvertRawData(boolean convertRawData) { this.convertRawData = convertRawData; }
 
     /**
      * <p>getName.</p>
