@@ -5,6 +5,7 @@ import com.github.pires.obd.exceptions.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * @author pires
  * @version $Id: $Id
  */
-public abstract class ObdCommand {
+public abstract class ObdCommand implements Serializable {
 
     /**
      * Error classes to be tested in order
@@ -137,11 +138,12 @@ public abstract class ObdCommand {
      * This method runs the error handling and data conversion logic
      * associated with the given ObdCommand, separate from the readResult
      * method, allowing users to read raw data and process that data at
-     * some later point
+     * some later point. Public because external data is being processed,
+     * so classes outside of ObdCommand heirarchy may need access.
      *
      * @param rawData
      */
-    protected void convertRawData(String rawData) {
+    public void convertRawData(String rawData) {
         this.rawData = rawData;
         checkForErrors();
         fillBuffer();
